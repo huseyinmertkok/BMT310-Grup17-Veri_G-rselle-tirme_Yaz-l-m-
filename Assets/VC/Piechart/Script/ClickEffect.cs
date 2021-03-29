@@ -18,7 +18,7 @@ namespace PieChart.ViitorCloud
         GameObject tempObject;
 
         // Start is called before the first frame update
-        void Awake()
+        /*void Awake()
         {
             isn = this;
             Maincamera = GetComponent<Camera>();
@@ -107,6 +107,6 @@ namespace PieChart.ViitorCloud
             anim[AnimationName].speed = -1;
             anim[AnimationName].time = anim[AnimationName].length;
             anim.CrossFade(AnimationName);
-        }
+        }*/
     }
 }

@@ -30,7 +30,7 @@ namespace PieChart.ViitorCloud
             for (int i = 0; i < pieObjects.Length; i++)
             {
                 gps[i].transform.GetComponent<Image>().color = pieObjects[i].GetComponent<MeshRenderer>().material.color;
-                gps[i].transform.Find("PercentageText").GetComponent<Text>().text = (Mathf.RoundToInt((data[i] * 100) / sumofdata)).ToString() + "%";
+                gps[i].transform.Find("PercentageText").GetComponent<Text>().text = (Mathf.RoundToInt((data[i] * 100) / sumofdata)).ToString() + "%" + "\n" + data[i].ToString();
                 //if (dataHeadername.Length > 0)
                 //    gps[i].transform.Find("HeadingText").GetComponent<Text>().text = dataHeadername[i];
                 if (dataDescription.Length > 0)
