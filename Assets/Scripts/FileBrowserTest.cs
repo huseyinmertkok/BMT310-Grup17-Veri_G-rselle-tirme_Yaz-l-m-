@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.IO;
 using SimpleFileBrowser;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 public class FileBrowserTest : MonoBehaviour
 {
     public Text text;
-
+    public bool isCSV;
     // Not1: FileBrowser'un döndürdüğü konumların sonunda '\' karakteri yer almaz
     // Not2: FileBrowser tek seferde sadece 1 diyalog gösterebilir
 
@@ -16,10 +18,10 @@ public class FileBrowserTest : MonoBehaviour
         // Filtreleri belirle (opsiyonel)
         // Eğer filtreler oyun esnasında hep aynı kalacaksa, filtreleri her seferinde
         // tekrar tekrar belirlemek yerine sadece bir kere belirlemek yeterlidir
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("Veri Dosyaları", ".txt", ".pdf", "xls", "xlsx", "csv"));
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Veri Dosyaları", ".txt", ".pdf", ".xls", ".xlsx", ".csv"));
         // Varsayılan filtreyi belirle (opsiyonel)
         // Eğer varsayılan filtre başarıyla belirlendiyse fonksiyon true döndürür
-        // Bu örnekte, varsayılan filtre olarak .jpg'i tutan "Resimler"i belirle
+        // Bu örnekte, varsayılan filtre olarak .jpg'i tutan "Resimler"i belirle 
         FileBrowser.SetDefaultFilter(".txt");
 
         // Yoksayılacak dosya uzantılarını belirle (opsiyonel) (varsayılan olarak .lnk ve .tmp uzantılı dosyalar yoksayılır)
@@ -86,10 +88,135 @@ public class FileBrowserTest : MonoBehaviour
             /*string hedefKonum = Path.Combine(Application.persistentDataPath, FileBrowserHelpers.GetFilename(FileBrowser.Result[0]));
             FileBrowserHelpers.CopyFile(FileBrowser.Result[0], hedefKonum);*/
 
-            //Debug.Log(FileBrowser.Result[0]);
-
             string fileContent = File.ReadAllText(@FileBrowser.Result[0]);
             text.text = fileContent;
+
+            if (extension.Equals(".csv"))
+                StringArrayForCSVFile(@FileBrowser.Result[0]);
+            else if (extension.Equals(".txt"))
+                StringArrayForTXTFile(@FileBrowser.Result[0]);
+
+
+        }
+    }
+
+    //CSV dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
+    void StringArrayForCSVFile(string locationOfData)
+    {
+        StreamReader strReader1 = new StreamReader(locationOfData);
+        bool endOfFile1 = false;
+        int numberofLine = 0, numberofColumn = 0;
+        //Dosyadaki sütun ve satır sayısını belirleyen kod.
+        while (!endOfFile1)
+        {
+            string data_String = strReader1.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile1 = true;
+                break;
+            }
+            var data_values = data_String.Split(';');
+            numberofLine++;
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                if (numberofLine == 1)
+                    numberofColumn++;
+  
+            }
+        }
+        Debug.Log("CSV Dosyası\nSatır Sayısı: " + numberofLine.ToString() + "\n" + "Sütun Sayısı: " + numberofColumn);
+        string[,] dataArray = new string[numberofLine, numberofColumn];
+        int a = 0, j = 0;
+        StreamReader strReader = new StreamReader(locationOfData);
+        bool endOfFile = false;
+        //Dosyadaki sütun ve satırları iki boyutlu dizi yapan kod.
+        while (!endOfFile)
+        {
+            a = 0;
+            string data_String = strReader.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile = true;
+                break;
+            }
+            var data_values = data_String.Split(';');
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                dataArray[j, a] = data_values[i].ToString();
+                a++;
+                if (a == data_values.Length)
+                    j++;
+            }
+        }
+
+        //İki boyutlu arrayi yazdıran kod.
+        for (int i = 0; i < dataArray.GetLength(0); i++)
+        {
+            for (int z = 0; z < dataArray.GetLength(1); z++)
+            {
+                Debug.Log(dataArray[i, z]);
+            }
+        }
+    }
+
+    //TXT dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
+    void StringArrayForTXTFile(string locationOfData)
+    {
+        StreamReader strReader1 = new StreamReader(locationOfData);
+        bool endOfFile1 = false;
+        int numberofLine = 0, numberofColumn = 0;
+
+        //Dosyadaki sütun ve satır sayısını belirleyen kod.
+        while (!endOfFile1)
+        {
+            string data_String = strReader1.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile1 = true;
+                break;
+            }
+            var data_values = data_String.Split(' ');
+            numberofLine++;
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                if (numberofLine == 1)
+                    numberofColumn++;
+
+            }
+        }
+        Debug.Log("TXT Dosyası\nSatır Sayısı: " + numberofLine.ToString() + "\n" + "Sütun Sayısı: " + numberofColumn);
+        string[,] dataArray = new string[numberofLine, numberofColumn];
+        int a = 0, j = 0;
+        StreamReader strReader = new StreamReader(locationOfData);
+        bool endOfFile = false;
+
+        //Dosyadaki sütun ve satırları iki boyutlu dizi yapan kod.
+        while (!endOfFile)
+        {
+            a = 0;
+            string data_String = strReader.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile = true;
+                break;
+            }
+            var data_values = data_String.Split(' ');
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                dataArray[j, a] = data_values[i].ToString();
+                a++;
+                if (a == data_values.Length)
+                    j++;
+            }
+        }
+
+        //İki boyutlu arrayi yazdıran kod.
+        for (int i = 0; i < dataArray.GetLength(0); i++)
+        {
+            for (int z = 0; z < dataArray.GetLength(1); z++)
+            {
+                Debug.Log(dataArray[i, z]);
+            }
         }
     }
 }
