@@ -150,13 +150,7 @@ public class FileBrowserTest : MonoBehaviour
         }
 
         //İki boyutlu arrayi yazdıran kod.
-        for (int i = 0; i < dataArray.GetLength(0); i++)
-        {
-            for (int z = 0; z < dataArray.GetLength(1); z++)
-            {
-                Debug.Log(dataArray[i, z]);
-            }
-        }
+        printArr(dataArray);
     }
 
     //TXT dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
@@ -211,6 +205,11 @@ public class FileBrowserTest : MonoBehaviour
         }
 
         //İki boyutlu arrayi yazdıran kod.
+        printArr(dataArray);
+    }
+    
+    void printArr(string [,] dataArray)
+    {
         for (int i = 0; i < dataArray.GetLength(0); i++)
         {
             for (int z = 0; z < dataArray.GetLength(1); z++)
