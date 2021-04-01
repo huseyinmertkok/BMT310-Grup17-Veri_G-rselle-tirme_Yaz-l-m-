@@ -3,13 +3,10 @@ using System.Collections;
 using System.IO;
 using SimpleFileBrowser;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System.Linq;
 
 public class FileBrowserTest : MonoBehaviour
 {
     public Text text;
-    public bool isCSV;
     // Not1: FileBrowser'un döndürdüğü konumların sonunda '\' karakteri yer almaz
     // Not2: FileBrowser tek seferde sadece 1 diyalog gösterebilir
 
@@ -94,37 +91,16 @@ public class FileBrowserTest : MonoBehaviour
             if (extension.Equals(".csv"))
                 StringArrayForCSVFile(@FileBrowser.Result[0]);
             else if (extension.Equals(".txt"))
-                StringArrayForTXTFile(@FileBrowser.Result[0]);
-
-
+                StringArrayForTXTFile(@FileBrowser.Result[0]);               
         }
     }
 
     //CSV dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
-    void StringArrayForCSVFile(string locationOfData)
+    public string [,] StringArrayForCSVFile(string locationOfData)
     {
-        StreamReader strReader1 = new StreamReader(locationOfData);
-        bool endOfFile1 = false;
-        int numberofLine = 0, numberofColumn = 0;
-        //Dosyadaki sütun ve satır sayısını belirleyen kod.
-        while (!endOfFile1)
-        {
-            string data_String = strReader1.ReadLine();
-            if (data_String == null)
-            {
-                endOfFile1 = true;
-                break;
-            }
-            var data_values = data_String.Split(';');
-            numberofLine++;
-            for (int i = 0; i < data_values.Length; i++)
-            {
-                if (numberofLine == 1)
-                    numberofColumn++;
-  
-            }
-        }
-        Debug.Log("CSV Dosyası\nSatır Sayısı: " + numberofLine.ToString() + "\n" + "Sütun Sayısı: " + numberofColumn);
+        int numberofLine = lineReader(locationOfData);
+        int numberofColumn = columnReader(locationOfData);
+        Debug.Log("CSV Dosyası\nSatır Sayısı: " + numberofLine.ToString() + " " + "Sütun Sayısı: " + numberofColumn);
         string[,] dataArray = new string[numberofLine, numberofColumn];
         int a = 0, j = 0;
         StreamReader strReader = new StreamReader(locationOfData);
@@ -148,42 +124,21 @@ public class FileBrowserTest : MonoBehaviour
                     j++;
             }
         }
-
         //İki boyutlu arrayi yazdıran kod.
         printArr(dataArray);
+        return dataArray;
     }
 
     //TXT dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
-    void StringArrayForTXTFile(string locationOfData)
+    public string [,] StringArrayForTXTFile(string locationOfData)
     {
-        StreamReader strReader1 = new StreamReader(locationOfData);
-        bool endOfFile1 = false;
-        int numberofLine = 0, numberofColumn = 0;
-
-        //Dosyadaki sütun ve satır sayısını belirleyen kod.
-        while (!endOfFile1)
-        {
-            string data_String = strReader1.ReadLine();
-            if (data_String == null)
-            {
-                endOfFile1 = true;
-                break;
-            }
-            var data_values = data_String.Split(' ');
-            numberofLine++;
-            for (int i = 0; i < data_values.Length; i++)
-            {
-                if (numberofLine == 1)
-                    numberofColumn++;
-
-            }
-        }
-        Debug.Log("TXT Dosyası\nSatır Sayısı: " + numberofLine.ToString() + "\n" + "Sütun Sayısı: " + numberofColumn);
+        int numberofLine = lineReader(locationOfData);
+        int numberofColumn = columnReader(locationOfData);
+        Debug.Log("TXT Dosyası\nSatır Sayısı: " + numberofLine.ToString() + " " + "Sütun Sayısı: " + numberofColumn);
         string[,] dataArray = new string[numberofLine, numberofColumn];
         int a = 0, j = 0;
         StreamReader strReader = new StreamReader(locationOfData);
         bool endOfFile = false;
-
         //Dosyadaki sütun ve satırları iki boyutlu dizi yapan kod.
         while (!endOfFile)
         {
@@ -203,9 +158,9 @@ public class FileBrowserTest : MonoBehaviour
                     j++;
             }
         }
-
         //İki boyutlu arrayi yazdıran kod.
         printArr(dataArray);
+        return dataArray;
     }
     
     void printArr(string [,] dataArray)
@@ -217,5 +172,50 @@ public class FileBrowserTest : MonoBehaviour
                 Debug.Log(dataArray[i, z]);
             }
         }
+    }
+
+    int columnReader(string locationOfData)
+    {
+        StreamReader strReader1 = new StreamReader(locationOfData);
+        bool endOfFile1 = false;
+        int numberofLine = 0, numberofColumn = 0;
+        //Dosyadaki sütun ve satır sayısını belirleyen kod.
+        while (!endOfFile1)
+        {
+            string data_String = strReader1.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile1 = true;
+                break;
+            }
+            var data_values = data_String.Split(';');
+            numberofLine++;
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                if (numberofLine == 1)
+                    numberofColumn++;
+            }
+        }
+        return numberofColumn;
+    }
+
+    int lineReader(string locationOfData)
+    {
+        StreamReader strReader1 = new StreamReader(locationOfData);
+        bool endOfFile1 = false;
+        int numberofLine = 0;
+        //Dosyadaki sütun ve satır sayısını belirleyen kod.
+        while (!endOfFile1)
+        {
+            string data_String = strReader1.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile1 = true;
+                break;
+            }
+            var data_values = data_String.Split(';');
+            numberofLine++;
+        }
+        return numberofLine;
     }
 }
