@@ -89,17 +89,17 @@ public class FileBrowserTest : MonoBehaviour
             text.text = fileContent;
 
             if (extension.Equals(".csv"))
-                StringArrayForCSVFile(@FileBrowser.Result[0]);
+                StringArrayForCSVFile(@FileBrowser.Result[0],extension);
             else if (extension.Equals(".txt"))
-                StringArrayForTXTFile(@FileBrowser.Result[0]);               
+                StringArrayForTXTFile(@FileBrowser.Result[0],extension);               
         }
     }
 
     //CSV dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
-    public string [,] StringArrayForCSVFile(string locationOfData)
+    public string [,] StringArrayForCSVFile(string locationOfData, string extension)
     {
         int numberofLine = lineReader(locationOfData);
-        int numberofColumn = columnReader(locationOfData);
+        int numberofColumn = columnReader(locationOfData,extension);
         Debug.Log("CSV Dosyası\nSatır Sayısı: " + numberofLine.ToString() + " " + "Sütun Sayısı: " + numberofColumn);
         string[,] dataArray = new string[numberofLine, numberofColumn];
         int a = 0, j = 0;
@@ -130,10 +130,10 @@ public class FileBrowserTest : MonoBehaviour
     }
 
     //TXT dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
-    public string [,] StringArrayForTXTFile(string locationOfData)
+    public string [,] StringArrayForTXTFile(string locationOfData, string extension)
     {
         int numberofLine = lineReader(locationOfData);
-        int numberofColumn = columnReader(locationOfData);
+        int numberofColumn = columnReader(locationOfData,extension);
         Debug.Log("TXT Dosyası\nSatır Sayısı: " + numberofLine.ToString() + " " + "Sütun Sayısı: " + numberofColumn);
         string[,] dataArray = new string[numberofLine, numberofColumn];
         int a = 0, j = 0;
@@ -153,10 +153,10 @@ public class FileBrowserTest : MonoBehaviour
             for (int i = 0; i < data_values.Length; i++)
             {
                 dataArray[j, a] = data_values[i].ToString();
-                a++;
-                if (a == data_values.Length)
-                    j++;
+                //Debug.Log(j.ToString() + " " + a.ToString() + dataArray[j, a].ToString());
+                a++;              
             }
+            j++;
         }
         //İki boyutlu arrayi yazdıran kod.
         printArr(dataArray);
@@ -169,17 +169,17 @@ public class FileBrowserTest : MonoBehaviour
         {
             for (int z = 0; z < dataArray.GetLength(1); z++)
             {
-                Debug.Log(dataArray[i, z]);
+                Debug.Log("Satır = "+(i+1).ToString()+" Sütun = " +(z+1).ToString() + "\n" +dataArray[i, z]);
             }
         }
     }
 
-    int columnReader(string locationOfData)
+    int columnReader(string locationOfData, string extension)
     {
         StreamReader strReader1 = new StreamReader(locationOfData);
         bool endOfFile1 = false;
         int numberofLine = 0, numberofColumn = 0;
-        //Dosyadaki sütun ve satır sayısını belirleyen kod.
+        //Dosyadaki sütun sayısını belirleyen kod.
         while (!endOfFile1)
         {
             string data_String = strReader1.ReadLine();
@@ -188,13 +188,28 @@ public class FileBrowserTest : MonoBehaviour
                 endOfFile1 = true;
                 break;
             }
-            var data_values = data_String.Split(';');
-            numberofLine++;
-            for (int i = 0; i < data_values.Length; i++)
+            
+            if (extension.Equals(".csv"))
             {
-                if (numberofLine == 1)
-                    numberofColumn++;
+                var data_values = data_String.Split(';');
+                numberofLine++;
+                for (int i = 0; i < data_values.Length; i++)
+                {
+                    if (numberofLine == 1)
+                        numberofColumn++;
+                }
             }
+            else if (extension.Equals(".txt"))
+            {
+                var data_values = data_String.Split(' ');
+                numberofLine++;
+                for (int i = 0; i < data_values.Length; i++)
+                {
+                    if (numberofLine == 1)
+                        numberofColumn++;
+                }
+            }
+
         }
         return numberofColumn;
     }
@@ -204,7 +219,7 @@ public class FileBrowserTest : MonoBehaviour
         StreamReader strReader1 = new StreamReader(locationOfData);
         bool endOfFile1 = false;
         int numberofLine = 0;
-        //Dosyadaki sütun ve satır sayısını belirleyen kod.
+        //Dosyadaki satır sayısını belirleyen kod.
         while (!endOfFile1)
         {
             string data_String = strReader1.ReadLine();
@@ -213,7 +228,6 @@ public class FileBrowserTest : MonoBehaviour
                 endOfFile1 = true;
                 break;
             }
-            var data_values = data_String.Split(';');
             numberofLine++;
         }
         return numberofLine;
