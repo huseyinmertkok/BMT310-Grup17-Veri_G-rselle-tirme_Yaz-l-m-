@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class FileBrowserTest : MonoBehaviour
 {
-    public Text text;
+    //public Text text;
+    public ChartCreator chartCreator;
+    private string[,] data;
     // Not1: FileBrowser'un döndürdüğü konumların sonunda '\' karakteri yer almaz
     // Not2: FileBrowser tek seferde sadece 1 diyalog gösterebilir
 
@@ -79,19 +81,34 @@ public class FileBrowserTest : MonoBehaviour
 
             // Seçilen ilk dosyanın byte'larını FileBrowserHelpers vasıtasıyla oku
             // File.ReadAllBytes'in aksine, bu fonksiyon Android 10 ve üzerinde de çalışır
-            byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
+            //byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
             string extension = Path.GetExtension(@FileBrowser.Result[0]);
             // Veya, ilk dosyayı persistentDataPath konumuna kopyala
             /*string hedefKonum = Path.Combine(Application.persistentDataPath, FileBrowserHelpers.GetFilename(FileBrowser.Result[0]));
             FileBrowserHelpers.CopyFile(FileBrowser.Result[0], hedefKonum);*/
 
-            string fileContent = File.ReadAllText(@FileBrowser.Result[0]);
-            text.text = fileContent;
+            //string fileContent = File.ReadAllText(@FileBrowser.Result[0]);
+            //text.text = fileContent;
 
             if (extension.Equals(".csv"))
-                StringArrayForCSVFile(@FileBrowser.Result[0],extension);
+                data = StringArrayForCSVFile(@FileBrowser.Result[0], extension);
             else if (extension.Equals(".txt"))
-                StringArrayForTXTFile(@FileBrowser.Result[0],extension);               
+                data = StringArrayForTXTFile(@FileBrowser.Result[0], extension);
+
+            chartCreator.dataName = Path.GetFileNameWithoutExtension(@FileBrowser.Result[0]);
+            chartCreator.dataLabels = new string[data.GetLength(0)];
+            chartCreator.dataValues = new float[data.GetLength(0)];
+
+            for (int i = 0; i < data.GetLength(0); i++)
+            {
+                chartCreator.dataLabels[i] = data[i, 0];
+                chartCreator.dataValues[i] = float.Parse(data[i, 1]);
+            }
+
+            AppManager.instance.uploadPanel.SetActive(false);
+            AppManager.instance.selectGraphPanel.SetActive(true);
+            AppManager.instance.dataNameText.text = chartCreator.dataName;
+            AppManager.instance.screenshotHandler.path = Path.GetDirectoryName(@FileBrowser.Result[0]) + Path.GetDirectoryName(@FileBrowser.Result[0])[2];
         }
     }
 
