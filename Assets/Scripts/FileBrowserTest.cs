@@ -259,4 +259,14 @@ public class FileBrowserTest : MonoBehaviour
         }
         return fLineData;
     }
+    
+    string[] chooseColumn(string[,] data, int columnNumber)
+    {
+        string[] chosenColumn = new string[(data.GetLength(0)) - 1];
+        for (int i = 0; i < chosenColumn.GetLength(0); i++)
+        {
+            chosenColumn[i] = data[i+1, columnNumber];
+        }
+        return chosenColumn;
+    }
 }
