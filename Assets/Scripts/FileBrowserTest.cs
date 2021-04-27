@@ -249,4 +249,14 @@ public class FileBrowserTest : MonoBehaviour
         }
         return numberofLine;
     }
+    
+    string[] getFirstLine(string[,] data)
+    {
+        string[] fLineData = new string[data.GetLength(1)];
+        for(int i = 0; i<fLineData.GetLength(0); i++)
+        {
+            fLineData[i] = data[0,i];
+        }
+        return fLineData;
+    }
 }
