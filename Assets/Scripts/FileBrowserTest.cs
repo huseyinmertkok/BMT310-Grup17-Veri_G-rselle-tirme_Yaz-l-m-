@@ -3,6 +3,10 @@ using System.Collections;
 using System.IO;
 using SimpleFileBrowser;
 using UnityEngine.UI;
+using FlexFramework.Excel;
+using FlexFramework.Demo;
+using UnityEditor;
+using System;
 
 public class FileBrowserTest : MonoBehaviour
 {
@@ -81,7 +85,7 @@ public class FileBrowserTest : MonoBehaviour
 
             // Seçilen ilk dosyanın byte'larını FileBrowserHelpers vasıtasıyla oku
             // File.ReadAllBytes'in aksine, bu fonksiyon Android 10 ve üzerinde de çalışır
-            //byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
+            byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
             string extension = Path.GetExtension(@FileBrowser.Result[0]);
             // Veya, ilk dosyayı persistentDataPath konumuna kopyala
             /*string hedefKonum = Path.Combine(Application.persistentDataPath, FileBrowserHelpers.GetFilename(FileBrowser.Result[0]));
@@ -94,15 +98,72 @@ public class FileBrowserTest : MonoBehaviour
                 data = StringArrayForCSVFile(@FileBrowser.Result[0], extension);
             else if (extension.Equals(".txt"))
                 data = StringArrayForTXTFile(@FileBrowser.Result[0], extension);
+            else if (extension.Equals(".xlsx"))
+                data = StringArrayForXLSXFile(bytes);
 
             chartCreator.dataName = Path.GetFileNameWithoutExtension(@FileBrowser.Result[0]);
-            chartCreator.dataLabels = new string[data.GetLength(0)];
-            chartCreator.dataValues = new float[data.GetLength(0)];
-
-            for (int i = 0; i < data.GetLength(0); i++)
+            
+            //Buradaki temp hangi sütunun Label olarak kullanılacağıdır. '2' sayısını değiştirerek sutünu değiştirebilirsiniz. Sütun string değerler içermelidir.
+            string[] temp = chooseColumn(data, 2);
+            bool isDuplicate;
+            int elemanSayisi = 0;
+            
+            //Aşağıdaki işlem unique olarak kaç değişken olduğunu belirler. 
+            for (int i = 0; i < temp.GetLength(0); i++)
             {
-                chartCreator.dataLabels[i] = data[i, 0];
-                chartCreator.dataValues[i] = float.Parse(data[i, 1]);
+                isDuplicate = false;
+                for (int j = 0; j < i; j++)
+                {
+                    if (temp[i] == temp[j])
+                    {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate)
+                {
+                    elemanSayisi++;
+                }
+            }
+
+            //Aşşağıdaki işlem unique elemanları diziye alır.
+            string[] uniqueElements = new string[elemanSayisi];
+            int a = 0;
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                isDuplicate = false;
+                for (int j = 0; j < i; j++)
+                {
+                    if (temp[i] == temp[j])
+                    {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate)
+                {
+                    uniqueElements[a] = temp[i];
+                    a++;
+                }
+            }
+
+            chartCreator.dataLabels = new string[uniqueElements.GetLength(0)];
+            chartCreator.dataValues = new float[uniqueElements.GetLength(0)];
+
+            for (int z = 0; z < uniqueElements.GetLength(0); z++)
+            {
+                Debug.Log(uniqueElements[z]);
+            }
+
+            for (int i = 0; i < uniqueElements.GetLength(0); i++)
+            {
+                chartCreator.dataLabels[i] = uniqueElements[i];
+            }
+
+            for (int i = 0; i < uniqueElements.GetLength(0); i++)
+            {
+                //Buradaki 3 sayısı Value olarak hangi sütundaki değeri aldığını seçer. Sayıyı değiştirerek sütunu da değiştirebilirsiniz. Sütun elemanları sayı olmalıdır yoksa hata verir.
+                chartCreator.dataValues[i] = float.Parse(data[i+1, 3]);
             }
 
             AppManager.instance.uploadPanel.SetActive(false);
@@ -190,7 +251,55 @@ public class FileBrowserTest : MonoBehaviour
             }
         }
     }
+    
+    //XLSX dosyasındaki verileri iki boyutlu string arrayine dönüştürür.
+    public string[,] StringArrayForXLSXFile(byte[] bytes)
+    {
+        string[,] temp;
+        var book = new WorkBook(bytes);
+        var sheet = book[0];
+        int line = 0; int column = 0;
+        while (true)
+        {
+            try
+            {
+                if (sheet[line][0] != null)
+                {
+                    line++;
+                }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                break;
+            }
+        }
 
+        while (true)
+        {
+            try
+            {
+                if (sheet[0][column] != null)
+                {
+                    column++;
+                }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                break;
+            }
+        }
+        temp = new string[line, column];
+        for (int i = 0; i < temp.GetLength(0); i++)
+        {
+            for (int j = 0; j < temp.GetLength(1); j++)
+            {
+                temp[i, j] = sheet[i][j].ToString();
+                Debug.Log(temp[i, j]);
+            }
+        }
+        return temp;
+    }
+    
     int columnReader(string locationOfData, string extension)
     {
         StreamReader strReader1 = new StreamReader(locationOfData);
