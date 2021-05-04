@@ -4,7 +4,6 @@ using System.IO;
 using SimpleFileBrowser;
 using UnityEngine.UI;
 using FlexFramework.Excel;
-using FlexFramework.Demo;
 using UnityEditor;
 using System;
 
@@ -21,7 +20,7 @@ public class FileBrowserTest : MonoBehaviour
         // Filtreleri belirle (opsiyonel)
         // Eğer filtreler oyun esnasında hep aynı kalacaksa, filtreleri her seferinde
         // tekrar tekrar belirlemek yerine sadece bir kere belirlemek yeterlidir
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("Veri Dosyaları", ".txt", ".pdf", ".xls", ".xlsx", ".csv"));
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Veri Dosyaları", ".txt", ".xls", ".xlsx", ".csv"));
         // Varsayılan filtreyi belirle (opsiyonel)
         // Eğer varsayılan filtre başarıyla belirlendiyse fonksiyon true döndürür
         // Bu örnekte, varsayılan filtre olarak .jpg'i tutan "Resimler"i belirle 
@@ -60,12 +59,7 @@ public class FileBrowserTest : MonoBehaviour
         //StartCoroutine(DosyaVeKlasorSecmeDiyaloguGosterCoroutine());
     }
 
-    public void BrowseBTN()
-    {
-        StartCoroutine(DosyaVeKlasorSecmeDiyaloguGosterCoroutine());
-    }
-
-    IEnumerator DosyaVeKlasorSecmeDiyaloguGosterCoroutine()
+    public IEnumerator DosyaVeKlasorSecmeDiyaloguGosterCoroutine()
     {
         // Dosya ve klasör seçme diyaloğu göster ve kullanıcının diyaloğu kapatmasını bekle
         // Dosya seçme modu: hem dosyalar hem klasörler, Birden çok dosya/klasör seçebilme: açık (true)
@@ -102,74 +96,97 @@ public class FileBrowserTest : MonoBehaviour
                 data = StringArrayForXLSXFile(bytes);
 
             chartCreator.dataName = Path.GetFileNameWithoutExtension(@FileBrowser.Result[0]);
-            
-            //Buradaki temp hangi sütunun Label olarak kullanılacağıdır. '2' sayısını değiştirerek sutünu değiştirebilirsiniz. Sütun string değerler içermelidir.
-            string[] temp = chooseColumn(data, 2);
-            bool isDuplicate;
-            int elemanSayisi = 0;
-            
-            //Aşağıdaki işlem unique olarak kaç değişken olduğunu belirler. 
-            for (int i = 0; i < temp.GetLength(0); i++)
+
+            string[] rows = getFirstLine(data);
+            for (int i = 0; i < rows.Length; i++)
             {
-                isDuplicate = false;
-                for (int j = 0; j < i; j++)
-                {
-                    if (temp[i] == temp[j])
-                    {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (!isDuplicate)
-                {
-                    elemanSayisi++;
-                }
+                //Debug.Log(rows[i]);
+                GameObject part = Instantiate(AppManager.instance.variablePartPrefab);
+                part.transform.SetParent(AppManager.instance.variablePartParent, false);
+                VariablePartCodes partCodes = part.GetComponent<VariablePartCodes>();
+                partCodes.rowIndex = i;
+                partCodes.variableNameText.text = rows[i];
+                partCodes.transform.localScale = Vector3.one;
             }
 
-            //Aşşağıdaki işlem unique elemanları diziye alır.
-            string[] uniqueElements = new string[elemanSayisi];
-            int a = 0;
-            for (int i = 0; i < temp.GetLength(0); i++)
-            {
-                isDuplicate = false;
-                for (int j = 0; j < i; j++)
-                {
-                    if (temp[i] == temp[j])
-                    {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (!isDuplicate)
-                {
-                    uniqueElements[a] = temp[i];
-                    a++;
-                }
-            }
+            //SetDataToChartCreator();
 
-            chartCreator.dataLabels = new string[uniqueElements.GetLength(0)];
-            chartCreator.dataValues = new float[uniqueElements.GetLength(0)];
-
-            for (int z = 0; z < uniqueElements.GetLength(0); z++)
-            {
-                Debug.Log(uniqueElements[z]);
-            }
-
-            for (int i = 0; i < uniqueElements.GetLength(0); i++)
-            {
-                chartCreator.dataLabels[i] = uniqueElements[i];
-            }
-
-            for (int i = 0; i < uniqueElements.GetLength(0); i++)
-            {
-                //Buradaki 3 sayısı Value olarak hangi sütundaki değeri aldığını seçer. Sayıyı değiştirerek sütunu da değiştirebilirsiniz. Sütun elemanları sayı olmalıdır yoksa hata verir.
-                chartCreator.dataValues[i] = float.Parse(data[i+1, 3]);
-            }
-
-            AppManager.instance.uploadPanel.SetActive(false);
-            AppManager.instance.selectGraphPanel.SetActive(true);
+            AppManager.instance.nextBTN.SetActive(true);
             AppManager.instance.dataNameText.text = chartCreator.dataName;
             AppManager.instance.screenshotHandler.path = Path.GetDirectoryName(@FileBrowser.Result[0]) + Path.GetDirectoryName(@FileBrowser.Result[0])[2];
+        }
+    }
+
+    public void SetDataToChartCreator(int rowIndex1, int rowIndex2)
+    {
+        //Buradaki temp hangi sütunun Label olarak kullanılacağıdır. '2' sayısını değiştirerek sutünu değiştirebilirsiniz. Sütun string değerler içermelidir.
+        //string[] temp = chooseColumn(data, 2);
+        string[] temp = chooseColumn(data, rowIndex1);
+        bool isDuplicate;
+        int elemanSayisi = 0;
+
+        //Aşağıdaki işlem unique olarak kaç değişken olduğunu belirler. 
+        for (int i = 0; i < temp.GetLength(0); i++)
+        {
+            isDuplicate = false;
+            for (int j = 0; j < i; j++)
+            {
+                if (temp[i] == temp[j])
+                {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate)
+            {
+                elemanSayisi++;
+            }
+        }
+
+        //Aşşağıdaki işlem unique elemanları diziye alır.
+        string[] uniqueElements = new string[elemanSayisi];
+        int a = 0;
+        for (int i = 0; i < temp.GetLength(0); i++)
+        {
+            isDuplicate = false;
+            for (int j = 0; j < i; j++)
+            {
+                if (temp[i] == temp[j])
+                {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate)
+            {
+                uniqueElements[a] = temp[i];
+                a++;
+            }
+        }
+
+        /*chartCreator.dataLabels = new string[uniqueElements.GetLength(0)];
+        chartCreator.dataValues = new float[uniqueElements.GetLength(0)];
+        /*for (int z = 0; z < uniqueElements.GetLength(0); z++)
+        {
+            Debug.Log(uniqueElements[z]);
+        }
+
+        for (int i = 0; i < uniqueElements.GetLength(0); i++)
+        {
+            chartCreator.dataLabels[i] = uniqueElements[i];
+        }
+
+        for (int i = 0; i < uniqueElements.GetLength(0); i++)
+        {
+            //Buradaki 3 sayısı Value olarak hangi sütundaki değeri aldığını seçer. Sayıyı değiştirerek sütunu da değiştirebilirsiniz. Sütun elemanları sayı olmalıdır yoksa hata verir.
+            //chartCreator.dataValues[i] = float.Parse(data[i + 1, 3]);
+            chartCreator.dataValues[i] = float.Parse(data[i + 1, rowIndex2]);
+        }*/
+        chartCreator.tempData1 = uniqueElements;
+        chartCreator.tempData2 = new string[uniqueElements.Length];
+        for (int i = 0; i < uniqueElements.Length; i++)
+        {
+            chartCreator.tempData2[i] = data[i + 1, rowIndex2];
         }
     }
 
@@ -203,7 +220,7 @@ public class FileBrowserTest : MonoBehaviour
             }
         }
         //İki boyutlu arrayi yazdıran kod.
-        printArr(dataArray);
+        //printArr(dataArray);
         return dataArray;
     }
 
@@ -237,7 +254,7 @@ public class FileBrowserTest : MonoBehaviour
             j++;
         }
         //İki boyutlu arrayi yazdıran kod.
-        printArr(dataArray);
+        //printArr(dataArray);
         return dataArray;
     }
     
@@ -294,7 +311,7 @@ public class FileBrowserTest : MonoBehaviour
             for (int j = 0; j < temp.GetLength(1); j++)
             {
                 temp[i, j] = sheet[i][j].ToString();
-                Debug.Log(temp[i, j]);
+                //Debug.Log(temp[i, j]);
             }
         }
         return temp;
@@ -372,10 +389,21 @@ public class FileBrowserTest : MonoBehaviour
     string[] chooseColumn(string[,] data, int columnNumber)
     {
         string[] chosenColumn = new string[(data.GetLength(0)) - 1];
+        //string[] chosenColumn = new string[(data.GetLength(0))];
         for (int i = 0; i < chosenColumn.GetLength(0); i++)
         {
             chosenColumn[i] = data[i+1, columnNumber];
         }
         return chosenColumn;
     }
+
+    /*string[] getDataLabels(string[,] data)
+    {
+        string[] result = new string[data.GetLength(1)];
+        for (int i = 0; i < result.Length; i++)
+        {
+            result[i] = data[1, i];
+        }
+        return result;
+    }*/
 }

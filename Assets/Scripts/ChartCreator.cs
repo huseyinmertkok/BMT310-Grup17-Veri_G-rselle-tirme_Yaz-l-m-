@@ -7,8 +7,10 @@ public class ChartCreator : MonoBehaviour
 {
     [Header("Data")]
     public string dataName;
-    public string[] dataLabels;
-    public float[] dataValues;
+    private string[] dataLabels;
+    private float[] dataValues;
+
+    public string[] tempData1, tempData2;
 
     [Header("Graphs")]
     public GameObject pieChartObject;

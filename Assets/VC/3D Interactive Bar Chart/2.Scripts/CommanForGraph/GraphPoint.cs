@@ -19,7 +19,7 @@ namespace Graph.VittorCloud
             set
             {
                 labelValue = value;
-                label.text = labelValue;
+                //label.text = labelValue;
             }
         }
 

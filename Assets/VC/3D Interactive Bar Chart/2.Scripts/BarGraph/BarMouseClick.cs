@@ -42,7 +42,7 @@ namespace BarGraph.VittorCloud
 
 
         #region UnityMouseEvents
-        public void OnMouseDown()
+        /*public void OnMouseDown()
         {
             transform.localScale = transform.localScale + new Vector3(0.15f, 0, 0.15f);
             outline.enabled = true;
@@ -69,7 +69,7 @@ namespace BarGraph.VittorCloud
             transform.localScale = barScale;
             outline.enabled = false;
             PointerExitOnBar(bar);
-        }
+        }*/
         #endregion
 
         #endregion

@@ -69,8 +69,8 @@ namespace PieChart.ViitorCloud
         /// <param name="dataHeadername">Name of data to represent on the pie</param>
         public void GenerateChart(int segment, AnimationType animationType, bool createpieOnly)
         {
-            if (!createpieOnly)
-                Instantiate(Resources.Load("Canvas") as GameObject);
+            /*if (!createpieOnly)
+                Instantiate(Resources.Load("Canvas") as GameObject);*/
 
             //ClickEffect.isn.allPartsObjectAndPositionDict.Clear();
             //ClickEffect.isn.allParsObjectAndCanvasObjectDict.Clear();

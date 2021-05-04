@@ -53,7 +53,7 @@ namespace BarGraph.VittorCloud
         public void SetBarLabelVisible(string value, float scaleFactor)
         {
 
-            BarLabel.text = value;
+            //BarLabel.text = value;
             LabelContainer.SetActive(true);
             Debug.Log("SetBarLabelVisible : " + LabelContainer.transform.localScale.y + " : " + transform.localScale.y, this.gameObject);
             if (transform.localScale.y == 0)
@@ -65,7 +65,7 @@ namespace BarGraph.VittorCloud
         }
         public void SetBarLabel(string value, float factor)
         {
-            BarLabel.text = value;
+            //BarLabel.text = value;
             LabelContainer.SetActive(false);
             ScaleFactor = factor;
 
