@@ -14,6 +14,7 @@ public class FileBrowserTest : MonoBehaviour
     //public Text text;
     public ChartCreator chartCreator;
     private string[,] data;
+    public DataBaseAccess dataBaseAccess;
     // Not1: FileBrowser'un döndürdüğü konumların sonunda '\' karakteri yer almaz
     // Not2: FileBrowser tek seferde sadece 1 diyalog gösterebilir
 
@@ -98,6 +99,7 @@ public class FileBrowserTest : MonoBehaviour
                 data = StringArrayForXLSXFile(bytes);
 
             chartCreator.dataName = Path.GetFileNameWithoutExtension(@FileBrowser.Result[0]);
+            dataBaseAccess.SaveToDatabase(data, Path.GetFileNameWithoutExtension(@FileBrowser.Result[0]));
 
             string[] rows = getFirstLine(data);
             for (int i = 0; i < rows.Length; i++)
