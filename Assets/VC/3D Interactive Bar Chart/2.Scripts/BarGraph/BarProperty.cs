@@ -81,7 +81,7 @@ namespace BarGraph.VittorCloud
             else
                 LabelContainer.transform.localScale = new Vector3(LabelContainer.transform.localScale.x , originalYscale * ScaleFactor / transform.localScale.y, LabelContainer.transform.localScale.z);
 
-            LabelContainer.SetActive(true);
+            //LabelContainer.SetActive(true);
 
         }
 

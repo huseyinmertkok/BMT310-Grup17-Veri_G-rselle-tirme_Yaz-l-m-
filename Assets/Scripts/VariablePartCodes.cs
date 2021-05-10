@@ -19,8 +19,6 @@ public class VariablePartCodes : MonoBehaviour
         {
             AppManager.instance.variable2Text.text = variableNameText.text;
             AppManager.instance.rowIndex2 = rowIndex;
-
-            AppManager.instance.fileBrowser.SetDataToChartCreator(AppManager.instance.rowIndex1, AppManager.instance.rowIndex2);
         }
     }
 }

@@ -353,7 +353,7 @@ namespace PieChart.ViitorCloud
                 }
                 catch (System.Exception w)
                 {
-                    //Debug.Log(w.Message);
+                    Debug.Log(w.Message);
                     continue;
                 }
                 var Final = subTris.Concat(subTris3D).Concat(subTrisLeft).Concat(subTrisRight).Concat(sidetrinaglesFinal);

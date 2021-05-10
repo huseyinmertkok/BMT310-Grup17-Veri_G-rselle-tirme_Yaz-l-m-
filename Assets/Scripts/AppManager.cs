@@ -23,6 +23,7 @@ public class AppManager : MonoBehaviour
 
     public FileBrowserTest fileBrowser;
     public ScreenshotHandler screenshotHandler;
+    public ChartCreator chartCreator;
 
     public GameObject nextBTN;
 
@@ -35,6 +36,9 @@ public class AppManager : MonoBehaviour
     public Slider colorSlider;
     public PostProcessVolume volume;
     private ColorGrading colorGrading;
+
+    public Toggle[] operationToggles;
+    public Toggle[] sortingToggles;
     private void Awake()
     {
         instance = this;
@@ -87,5 +91,28 @@ public class AppManager : MonoBehaviour
         {
             variable2Text.text = "Seçilmedi";
         }
+    }
+
+    public int GetSelectedToggle(Toggle[] toggles)
+    {
+        int selected = 0;
+        for (int i = 0; i < toggles.Length; i++)
+        {
+            if (toggles[i].isOn)
+            {
+                selected = i;
+            }
+        }
+
+        return selected;
+    }
+
+    public void SelectGraphBTN()
+    {
+        int operation = GetSelectedToggle(operationToggles);
+        int sorting = GetSelectedToggle(sortingToggles);
+        fileBrowser.SetDataToChartCreator(rowIndex1, rowIndex2, operation, sorting);
+        //chartCreator.BarChartBTN();
+        chartCreator.PieChartBTN();
     }
 }

@@ -8,7 +8,7 @@ public class ChartCreator : MonoBehaviour
     [Header("Data")]
     public string dataName;
     private string[] dataLabels;
-    private float[] dataValues;
+    private double[] dataValues;
 
     public string[] tempData1, tempData2;
 
@@ -27,24 +27,41 @@ public class ChartCreator : MonoBehaviour
         
     }
 
+    public void TempToData()
+    {
+        dataLabels = tempData1;
+        dataValues = new double[tempData2.Length];
+        for (int i = 0; i < tempData2.Length; i++)
+        {
+            dataValues[i] = double.Parse(tempData2[i]);
+        }
+    }
+
     public void PieChartBTN()
     {
-        AppManager.instance.selectGraphPanel.SetActive(false);
+        TempToData();
+        //AppManager.instance.selectGraphPanel.SetActive(false);
         PieChart.ViitorCloud.PieChart pieChart;
         pieChart = pieChartObject.GetComponent<PieChart.ViitorCloud.PieChart>();
         pieChart.segments = dataValues.Length;
-        pieChart.Data = dataValues;
+        float[] newDataValues = new float[dataValues.Length];
+        for (int i = 0; i < dataValues.Length; i++)
+        {
+            newDataValues[i] = (float)dataValues[i];
+        }
+        pieChart.Data = newDataValues;
         pieChart.dataDescription = new List<string>(dataLabels);
         pieChartObject.SetActive(true);
-        pieChart.transform.DORotate(Vector3.right * 45f, 1f).OnComplete(() =>
+        /*pieChart.transform.DORotate(Vector3.right * 45f, 1f).OnComplete(() =>
         {
             AppManager.instance.takeSSPanel.SetActive(true);
-        });
+        });*/
     }
 
     public void BarChartBTN()
     {
-        AppManager.instance.selectGraphPanel.SetActive(false);
+        TempToData();
+        //AppManager.instance.selectGraphPanel.SetActive(false);
         BarGraphExample barChartData;
         barChartData = barChartObject.GetComponent<BarGraphExample>();
         barChartData.exampleDataSet = new List<BarGraph.VittorCloud.BarGraphDataSet>();
@@ -52,17 +69,22 @@ public class ChartCreator : MonoBehaviour
         dataSet.GroupName = dataName;
         dataSet.barColor = Color.blue;
         dataSet.ListOfBars = new List<BarGraph.VittorCloud.XYBarValues>();
+        float[] newDataValues = new float[dataValues.Length];
+        for (int i = 0; i < dataValues.Length; i++)
+        {
+            newDataValues[i] = (float)dataValues[i];
+        }
         for (int i = 0; i < dataValues.Length; i++)
         {
             BarGraph.VittorCloud.XYBarValues values = new BarGraph.VittorCloud.XYBarValues();
             values.XValue = dataLabels[i];
-            values.YValue = dataValues[i];
+            values.YValue = newDataValues[i];
             dataSet.ListOfBars.Add(values);
         }
         barChartData.exampleDataSet.Add(dataSet);
         barChartObject.SetActive(true);
         //barChartObject.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane));
-        Vector3 camPos = new Vector3(0, 5, -20);
+        /*Vector3 camPos = new Vector3(0, 5, -20);
         if (dataValues.Length % 2 == 1)
         {
             camPos.x = (dataValues.Length + 1) / 2;
@@ -71,8 +93,8 @@ public class ChartCreator : MonoBehaviour
         {
             camPos.x = dataValues.Length / 2 + .5f;
         }
-        AppManager.instance.mainCamTransform.position = camPos;
-        AppManager.instance.takeSSPanel.SetActive(true);
+        AppManager.instance.mainCamTransform.position = camPos;*/
+        //AppManager.instance.takeSSPanel.SetActive(true);
     }
 
     public void BTN2D()

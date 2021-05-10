@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using FlexFramework.Excel;
 using UnityEditor;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class FileBrowserTest : MonoBehaviour
 {
@@ -117,7 +119,7 @@ public class FileBrowserTest : MonoBehaviour
         }
     }
 
-    public void SetDataToChartCreator(int rowIndex1, int rowIndex2)
+    public void SetDataToChartCreator(int rowIndex1, int rowIndex2, int operation, int sorting)
     {
         //Buradaki temp hangi sütunun Label olarak kullanılacağıdır. '2' sayısını değiştirerek sutünu değiştirebilirsiniz. Sütun string değerler içermelidir.
         //string[] temp = chooseColumn(data, 2);
@@ -184,10 +186,92 @@ public class FileBrowserTest : MonoBehaviour
         }*/
         chartCreator.tempData1 = uniqueElements;
         chartCreator.tempData2 = new string[uniqueElements.Length];
+        //chartCreator.tempData2 = chooseColumn(data, rowIndex2);
+        string[] rowData1 = chooseColumn(data, rowIndex1);
+        string[] rowData2 = chooseColumn(data, rowIndex2);
+        double testFloat;
+        bool floatable = double.TryParse(rowData2[0], out testFloat);
         for (int i = 0; i < uniqueElements.Length; i++)
         {
-            chartCreator.tempData2[i] = data[i + 1, rowIndex2];
+            double total = 0f;
+            int count = 0;
+            for (int j = 0; j < rowData1.Length; j++)
+            {
+                //chartCreator.tempData2[j] = data[j + 1, rowIndex2];
+                if (chartCreator.tempData1[i] == rowData1[j])
+                {
+                    if (floatable)
+                    {
+                        total += double.Parse(rowData2[j]);
+                    }
+                    count++;
+                }
+            }
+            double avarage = total / count;
+
+            switch (operation)
+            {
+                case 0://toplam
+                    chartCreator.tempData2[i] = total.ToString();
+                    break;
+
+                case 1://ortalama
+                    chartCreator.tempData2[i] = avarage.ToString();
+                    break;
+
+                case 2://adet
+                    chartCreator.tempData2[i] = count.ToString();
+                    break;
+            }
         }
+
+        if (sorting > 0)
+        {
+            List<string> data2List = new List<string>();
+            if (floatable)
+            {
+                List<double> data2FloatList = new List<double>();
+                for (int i = 0; i < chartCreator.tempData2.Length; i++)
+                {
+                    data2FloatList.Add(double.Parse(chartCreator.tempData2[i]));
+                }
+                data2FloatList.Sort();
+                for (int i = 0; i < data2FloatList.Count; i++)
+                {
+                    data2List.Add(data2FloatList[i].ToString());
+                }
+            }
+            else
+            {
+                data2List = chartCreator.tempData2.ToList();
+                data2List.Sort();
+            }
+            
+            string[] data1List = new string[chartCreator.tempData1.Length];
+            //data2List.AddRange(chartCreator.tempData2);
+            for (int i = 0; i < data2List.Count; i++)
+            {
+                for (int j = 0; j < chartCreator.tempData2.Length; j++)
+                {
+                    if (data2List[i] == chartCreator.tempData2[j])
+                    {
+                        data1List[i] = chartCreator.tempData1[j];
+                    }
+                }
+            }
+
+            if (sorting == 2)
+            {
+                chartCreator.tempData1 = data1List.Reverse().ToArray();
+                data2List.Reverse();
+            }
+            else
+            {
+                chartCreator.tempData1 = data1List;
+            }
+            chartCreator.tempData2 = data2List.ToArray();
+        }
+        
     }
 
     //CSV dosyasındaki verileri iki boyutlu string arrayine dönüştürür.

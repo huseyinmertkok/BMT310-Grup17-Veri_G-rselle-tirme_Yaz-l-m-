@@ -15,7 +15,10 @@ namespace Uitility.VittorCloud
                 var go = Selection.activeGameObject;
                 go.SetActive(!go.activeSelf);
             }
-            catch (System.Exception asd) { }
+            catch (System.Exception asd) 
+            {
+                Debug.Log(asd.Message);
+            }
         }
 
 
