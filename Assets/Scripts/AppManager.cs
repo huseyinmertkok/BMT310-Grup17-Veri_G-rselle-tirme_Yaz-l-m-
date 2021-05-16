@@ -13,7 +13,6 @@ public class AppManager : MonoBehaviour
     [Header("Panels")]
     public GameObject uploadPanel;
     public GameObject selectGraphPanel;
-    public GameObject takeSSPanel;
 
     public TextMeshProUGUI dataNameText;
 
@@ -24,6 +23,7 @@ public class AppManager : MonoBehaviour
     public FileBrowserTest fileBrowser;
     public ScreenshotHandler screenshotHandler;
     public ChartCreator chartCreator;
+    public TooltipCodes toolTip;
 
     public GameObject nextBTN;
 
@@ -37,18 +37,24 @@ public class AppManager : MonoBehaviour
     public PostProcessVolume volume;
     private ColorGrading colorGrading;
 
+    public Slider sizeSlider;
+
     public Toggle[] operationToggles;
     public Toggle[] sortingToggles;
+    public Toggle[] dimensionalToggles;
+
+    public InputField dataUnitText;
     private void Awake()
     {
         instance = this;
     }
     void Start()
     {
+        toolTip.parentRectTransform.gameObject.SetActive(false);
+
         nextBTN.SetActive(false);
         uploadPanel.SetActive(true);
         selectGraphPanel.SetActive(false);
-        takeSSPanel.SetActive(false);
 
         volume.profile.TryGetSettings(out colorGrading);
     }
@@ -57,6 +63,35 @@ public class AppManager : MonoBehaviour
     {
         float tint = colorSlider.value;
         colorGrading.tint.value = tint * 100;
+
+        ssCam.fieldOfView = -sizeSlider.value;
+        ssCam.orthographicSize = -sizeSlider.value / 30f;
+
+        DimensionalControl();
+
+        chartCreator.dataUnit =" " + dataUnitText.text;
+    }
+
+    private void DimensionalControl()
+    {
+        int index = GetSelectedToggle(dimensionalToggles);
+
+        if (index == 0)
+        {
+            ssCam.orthographic = true;
+            if (chartCreator.isPieChart)
+            {
+                chartCreator.currentChart.transform.rotation = Quaternion.identity;
+            }
+        }
+        else
+        {
+            ssCam.orthographic = false;
+            if (chartCreator.isPieChart)
+            {
+                chartCreator.currentChart.transform.rotation = Quaternion.Euler(Vector3.right * 45f);
+            }
+        }
     }
 
     public void ResetBTN()
@@ -107,12 +142,29 @@ public class AppManager : MonoBehaviour
         return selected;
     }
 
-    public void SelectGraphBTN()
+    public void SelectGraphBTN(int graphIndex)
     {
         int operation = GetSelectedToggle(operationToggles);
         int sorting = GetSelectedToggle(sortingToggles);
-        fileBrowser.SetDataToChartCreator(rowIndex1, rowIndex2, operation, sorting);
-        //chartCreator.BarChartBTN();
-        chartCreator.PieChartBTN();
+        fileBrowser.SetDataToChartCreator(rowIndex1, rowIndex2, operation, sorting);  
+
+        switch (graphIndex)//0 bar, 1 pie, 2 line, 3 bubble
+        {
+            case 0:
+                chartCreator.BarChartBTN();
+                break;
+
+            case 1:
+                chartCreator.PieChartBTN();
+                break;
+
+            case 2:
+                chartCreator.LineChartBTN();
+                break;
+
+            case 3:
+                chartCreator.BubbleChartBTN();
+                break;
+        }
     }
 }

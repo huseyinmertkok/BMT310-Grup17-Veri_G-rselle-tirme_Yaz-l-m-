@@ -52,20 +52,17 @@ namespace BarGraph.VittorCloud
         #region Customfunctions
         public void SetBarLabelVisible(string value, float scaleFactor)
         {
-
-            //BarLabel.text = value;
+            BarLabel.text = value;
             LabelContainer.SetActive(true);
             Debug.Log("SetBarLabelVisible : " + LabelContainer.transform.localScale.y + " : " + transform.localScale.y, this.gameObject);
             if (transform.localScale.y == 0)
                 LabelContainer.transform.localScale = new Vector3(LabelContainer.transform.localScale.x, originalYscale * scaleFactor/ transform.localScale.x, LabelContainer.transform.localScale.z);
             else
                 LabelContainer.transform.localScale = new Vector3(LabelContainer.transform.localScale.x, originalYscale * scaleFactor / transform.localScale.y, LabelContainer.transform.localScale.z);
-
-
         }
         public void SetBarLabel(string value, float factor)
         {
-            //BarLabel.text = value;
+            BarLabel.text = value;
             LabelContainer.SetActive(false);
             ScaleFactor = factor;
 
@@ -81,7 +78,7 @@ namespace BarGraph.VittorCloud
             else
                 LabelContainer.transform.localScale = new Vector3(LabelContainer.transform.localScale.x , originalYscale * ScaleFactor / transform.localScale.y, LabelContainer.transform.localScale.z);
 
-            //LabelContainer.SetActive(true);
+            LabelContainer.SetActive(true);
 
         }
 

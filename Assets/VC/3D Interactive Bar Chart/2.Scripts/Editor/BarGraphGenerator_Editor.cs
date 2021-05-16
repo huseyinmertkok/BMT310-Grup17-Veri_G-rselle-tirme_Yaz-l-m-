@@ -20,7 +20,7 @@ namespace BarGraph.VittorCloud
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Graph Settings", EditorStyles.boldLabel);
             EditorGUILayout.Space();
-            script.MaxHeight = (int)EditorGUILayout.IntField("Max Height", script.MaxHeight = 10);
+            script.MaxHeight = (int)EditorGUILayout.IntField("Max Height", script.MaxHeight = 5);
             script.xStart = EditorGUILayout.FloatField("X Start", script.xStart);
             script.yStart = EditorGUILayout.FloatField("Y Start", script.yStart);
             script.zStart = EditorGUILayout.FloatField("Z Start", script.zStart);

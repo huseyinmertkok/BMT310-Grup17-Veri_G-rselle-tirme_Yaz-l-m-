@@ -63,7 +63,7 @@ namespace BarGraph.VittorCloud
         public enum BarColor { SolidColor = 1, CustumMaterial = 2, HeightWiseGradient = 3 };
 
         //[Header("Graph Settings")]
-        public int MaxHeight = 10;
+        public int MaxHeight = 5;
         public float xStart = 1;
         public float yStart = 1;
         public float zStart = 1;
@@ -138,7 +138,10 @@ namespace BarGraph.VittorCloud
         #endregion
 
         #region UnityCallBacks
-
+        private void Awake()
+        {
+            MaxHeight = 5;
+        }
         public void Start()
         {
             if (OnInitialGraphCompleted == null)

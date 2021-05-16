@@ -99,7 +99,7 @@ namespace PieChart.ViitorCloud
 
             if (customColor.Count != segment)
             {
-                Debug.LogError("Generating Random Color. \n\n ColorList Count != segment");
+                //Debug.LogError("Generating Random Color. \n\n ColorList Count != segment");
                 customColor = GenerateRandomColors(segment).ToList();
             }
 

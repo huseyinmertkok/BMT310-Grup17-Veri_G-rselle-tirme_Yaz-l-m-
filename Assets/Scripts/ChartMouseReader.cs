@@ -7,8 +7,10 @@ public class ChartMouseReader : MonoBehaviour
 {
     public Camera mouseCam;
     public RectTransform canvasTransform;
-    public LayerMask chartObject;
+    public LayerMask chartPlane, chartObject;
     public RectTransform chartSide;
+
+    //public Transform testSphere;
     void Start()
     {
 
@@ -33,11 +35,24 @@ public class ChartMouseReader : MonoBehaviour
 
         Vector3 rayPos = mouseCam.ScreenToWorldPoint(new Vector3(targetPos.x + 400, targetPos.y + 300, 3));
         Ray ray = new Ray(rayPos - Vector3.forward * +3, Vector3.forward);
-        Debug.DrawRay(ray.origin, ray.direction, Color.red);
+        //Debug.DrawRay(ray.origin, ray.direction, Color.red);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, chartObject))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, chartPlane))
         {
-
+            //testSphere.transform.position = hit.point;
+            //Ray ray2 = new Ray(hit.point, Vector3.forward);
+            Ray ray2 = mouseCam.ScreenPointToRay(mouseCam.WorldToScreenPoint(hit.point));
+            RaycastHit hit2;
+            if (Physics.Raycast(ray2, out hit2, Mathf.Infinity, chartObject))
+            {
+                //testSphere.transform.position = hit2.point;
+                AppManager.instance.toolTip.parentRectTransform.gameObject.SetActive(true);
+                AppManager.instance.toolTip.SetText(AppManager.instance.chartCreator.tempData1[int.Parse(hit2.transform.name)], AppManager.instance.chartCreator.tempData2[int.Parse(hit2.transform.name)]);
+            }
+            else
+            {
+                AppManager.instance.toolTip.parentRectTransform.gameObject.SetActive(false);
+            }
         }
     }
 }
