@@ -9,7 +9,7 @@ public class ChartCreator : MonoBehaviour
     public string dataName;
     public string dataUnit;
     private string[] dataLabels;
-    private double[] dataValues;
+    private float[] dataValues;
 
     public string[] tempData1, tempData2;
 
@@ -35,10 +35,10 @@ public class ChartCreator : MonoBehaviour
     public void TempToData()
     {
         dataLabels = tempData1;
-        dataValues = new double[tempData2.Length];
+        dataValues = new float[tempData2.Length];
         for (int i = 0; i < tempData2.Length; i++)
         {
-            dataValues[i] = double.Parse(tempData2[i]);
+            dataValues[i] = float.Parse(tempData2[i]);
         }
     }
 
