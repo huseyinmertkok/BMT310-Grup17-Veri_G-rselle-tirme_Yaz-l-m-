@@ -165,7 +165,6 @@ MonoBehaviour:
   m_SourceFontFile: {fileID: 12800000, guid: 4b62d0be8320d14498205344d7dcb5c3, type: 3}
   m_AtlasPopulationMode: 1
   m_FaceInfo:
-    m_FaceIndex: 0
     m_FamilyName: Poppins
     m_StyleName: Bold
     m_PointSize: 90
@@ -857,7 +856,6 @@ MonoBehaviour:
   - {fileID: -3419181595396142810}
   m_AtlasTextureIndex: 0
   m_IsMultiAtlasTexturesEnabled: 0
-  m_ClearDynamicDataOnBuild: 0
   m_UsedGlyphRects:
   - m_X: 0
     m_Y: 0
