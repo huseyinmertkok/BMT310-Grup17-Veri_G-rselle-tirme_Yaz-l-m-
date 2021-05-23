@@ -106,4 +106,69 @@ public class FileBrowser : MonoBehaviour
         return numberofLine;
     }
 
+    public string[,] StringArrayForTXTFile(string locationOfData, string extension)
+    {
+        int numberofLine = lineReader(locationOfData);
+        int numberofColumn = columnReader(locationOfData, extension);
+        Debug.Log("TXT Dosyası\nSatır Sayısı: " + numberofLine.ToString() + " " + "Sütun Sayısı: " + numberofColumn);
+        string[,] dataArray = new string[numberofLine, numberofColumn];
+        int a = 0, j = 0;
+        StreamReader strReader = new StreamReader(locationOfData);
+        bool endOfFile = false;
+        //Dosyadaki sütun ve satırları iki boyutlu dizi yapan kod.
+        while (!endOfFile)
+        {
+            a = 0;
+            string data_String = strReader.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile = true;
+                break;
+            }
+            var data_values = data_String.Split(' ');
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                dataArray[j, a] = data_values[i].ToString();
+                //Debug.Log(j.ToString() + " " + a.ToString() + dataArray[j, a].ToString());
+                a++;
+            }
+            j++;
+        }
+        //İki boyutlu arrayi yazdıran kod.
+        //printArr(dataArray);
+        return dataArray;
+    }
+
+    public string[,] StringArrayForCSVFile(string locationOfData, string extension)
+    {
+        int numberofLine = lineReader(locationOfData);
+        int numberofColumn = columnReader(locationOfData, extension);
+        Debug.Log("CSV Dosyası\nSatır Sayısı: " + numberofLine.ToString() + " " + "Sütun Sayısı: " + numberofColumn);
+        string[,] dataArray = new string[numberofLine, numberofColumn];
+        int a = 0, j = 0;
+        StreamReader strReader = new StreamReader(locationOfData);
+        bool endOfFile = false;
+        //Dosyadaki sütun ve satırları iki boyutlu dizi yapan kod.
+        while (!endOfFile)
+        {
+            a = 0;
+            string data_String = strReader.ReadLine();
+            if (data_String == null)
+            {
+                endOfFile = true;
+                break;
+            }
+            var data_values = data_String.Split(';');
+            for (int i = 0; i < data_values.Length; i++)
+            {
+                dataArray[j, a] = data_values[i].ToString();
+                a++;
+                if (a == data_values.Length)
+                    j++;
+            }
+        }
+        //İki boyutlu arrayi yazdıran kod.
+        //printArr(dataArray);
+        return dataArray;
+    }
 }
