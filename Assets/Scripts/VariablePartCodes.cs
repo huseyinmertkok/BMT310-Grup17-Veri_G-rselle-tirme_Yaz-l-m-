@@ -10,12 +10,12 @@ public class VariablePartCodes : MonoBehaviour
 
     public void ChooseBTN()
     {
-        if (AppManager.instance.variable1Text.text.Equals("Seçilmedi"))
+        if (AppManager.instance.variable1Text.text.Equals("Not Chosen"))
         {
             AppManager.instance.variable1Text.text = variableNameText.text;
             AppManager.instance.rowIndex1 = rowIndex;
         }
-        else if (AppManager.instance.variable2Text.text.Equals("Seçilmedi"))
+        else if (AppManager.instance.variable2Text.text.Equals("Not Chosen"))
         {
             AppManager.instance.variable2Text.text = variableNameText.text;
             AppManager.instance.rowIndex2 = rowIndex;

@@ -120,11 +120,11 @@ public class AppManager : MonoBehaviour
     {
         if (variable1)
         {
-            variable1Text.text = "Seçilmedi";
+            variable1Text.text = "Not Chosen";
         }
         else
         {
-            variable2Text.text = "Seçilmedi";
+            variable2Text.text = "Not Chosen";
         }
     }
 
