@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
+using System;
 
 public class AppManager : MonoBehaviour
 {
@@ -42,8 +43,11 @@ public class AppManager : MonoBehaviour
     public Toggle[] operationToggles;
     public Toggle[] sortingToggles;
     public Toggle[] dimensionalToggles;
+    public Toggle[] ssToggles;
 
     public InputField dataUnitText;
+
+    public RenderTexture originalRenderTexture;
     private void Awake()
     {
         instance = this;
@@ -57,6 +61,8 @@ public class AppManager : MonoBehaviour
         selectGraphPanel.SetActive(false);
 
         volume.profile.TryGetSettings(out colorGrading);
+
+        originalRenderTexture = ssCam.targetTexture;
     }
 
     private void Update()
@@ -166,5 +172,25 @@ public class AppManager : MonoBehaviour
                 chartCreator.BubbleChartBTN();
                 break;
         }
+    }
+
+    public void TakeSSBTN()
+    {
+        int index = GetSelectedToggle(ssToggles);
+        Vector2Int resulution;
+        if (index == 0)
+        {
+            resulution = new Vector2Int(800, 600);
+        }
+        else if (index == 1)
+        {
+            resulution = new Vector2Int(1600, 1200);
+        }
+        else
+        {
+            resulution = new Vector2Int(2400, 1800);
+        }
+        TakeSSCodes.TakeSS(ssCam, resulution.x, resulution.y, screenshotHandler.path, "Chart " + System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss"));
+        //Debug.Log(resulution);
     }
 }

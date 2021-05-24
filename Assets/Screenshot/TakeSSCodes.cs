@@ -31,10 +31,10 @@ public class TakeSSCodes : MonoBehaviour
 
             byte[] byteArray = renderResult.EncodeToPNG();
             System.IO.File.WriteAllBytes(path + "/" + fileName + ".png", byteArray);
-            Debug.Log("Screenshot saved.");
+            //Debug.Log("Screenshot saved.");
 
             RenderTexture.ReleaseTemporary(renderTexture);
-            cam.targetTexture = null;
+            cam.targetTexture = AppManager.instance.originalRenderTexture;
         }
     }
 
